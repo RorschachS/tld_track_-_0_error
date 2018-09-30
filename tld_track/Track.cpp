@@ -3,6 +3,7 @@
 // ================================
 
 #include "Track.h"
+#define CV_RGB( r, g, b )  cvScalar( (b), (g), (r), 0 )
 
 
 EvTrackCore::EvTrackCore(char* pChannelID)
@@ -73,7 +74,7 @@ EvTrackCore::EvTrackCore(char* pChannelID)
 	m_szChannelID[0] = 0;
 	if (pChannelID)
 	{
-		strcpy(m_szChannelID, pChannelID);
+		strcpy_s(m_szChannelID, pChannelID);
 	}
 
 	// 开启日志记录
@@ -551,14 +552,14 @@ bool EvTrackCore::Execute(IplImage* pFrame, long long TimeStamp, int iMotionDire
 			// ----------- Check Time Stamp ---------------
 			if (m_iTimeInterval <= 0 || m_iTimeInterval > 300)
 			{
-				sprintf(mLogRecord.mLogInfor, "[Warning] : ID_%d - TimeInterval_%d ms 帧间隔异常!\n", pObj->m_ID, m_iTimeInterval);
+				sprintf_s(mLogRecord.mLogInfor, "[Warning] : ID_%d - TimeInterval_%d ms 帧间隔异常!\n", pObj->m_ID, m_iTimeInterval);
 				PrintfLog(&mLogRecord, m_CurrTimeStamp, mLogRecord.mLogInfor);
 			}
 
 			// ----------- Check Track Drift ----------------
 			if ( CheckTrackDrift(pObj->mTraceResult[pObj->mTraceNum-1].mBB, pObj->mAnalyROI.mROI) )
 			{
-				sprintf(mLogRecord.mLogInfor, "[Clean] : ID_%d - BB_[%d,%d,%d,%d] - ROI_[%d,%d,%d,%d]-跟踪结果漂移\n", pObj->m_ID, 
+				sprintf_s(mLogRecord.mLogInfor, "[Clean] : ID_%d - BB_[%d,%d,%d,%d] - ROI_[%d,%d,%d,%d]-跟踪结果漂移\n", pObj->m_ID, 
 					                           (int)pObj->mTraceResult[pObj->mTraceNum-1].mBB.mPointLT.x, (int)pObj->mTraceResult[pObj->mTraceNum-1].mBB.mPointLT.y,
 											   (int)pObj->mTraceResult[pObj->mTraceNum-1].mBB.mPointRD.x, (int)pObj->mTraceResult[pObj->mTraceNum-1].mBB.mPointRD.y, 
 											   pObj->mAnalyROI.mROI.x, pObj->mAnalyROI.mROI.y, 
@@ -580,7 +581,7 @@ bool EvTrackCore::Execute(IplImage* pFrame, long long TimeStamp, int iMotionDire
 		//	iTextureType = CheckTrackTextureType(pObj->mTraceResult[pObj->mTraceNum-1].mBB);
 			if ( iTextureType > 0 )
 			{
-				sprintf(mLogRecord.mLogInfor, "[Clean] : ID_%d - 目标纹理弱\n", pObj->m_ID);
+				sprintf_s(mLogRecord.mLogInfor, "[Clean] : ID_%d - 目标纹理弱\n", pObj->m_ID);
 				PrintfLog(&mLogRecord, m_CurrTimeStamp, mLogRecord.mLogInfor);
 
 				pObj->Clean();
@@ -610,9 +611,9 @@ bool EvTrackCore::Execute(IplImage* pFrame, long long TimeStamp, int iMotionDire
 				DrawResult(&(m_ObjectSets[i]), m_DrawImage);
 			}
 		}
-		sprintf(m_Text, "#ImgSize: %d*%d #Time = %dms[%dms]", m_ImageSize.width, m_ImageSize.height, m_AlgoUsedTime, m_AlgoShowTime);
+		sprintf_s(m_Text, "#ImgSize: %d*%d #Time = %dms[%dms]", m_ImageSize.width, m_ImageSize.height, m_AlgoUsedTime, m_AlgoShowTime);
 		cvPutText(m_DrawImage, m_Text, cvPoint(5,15), &m_Font, CV_RGB(0, 255, 0));
-		sprintf(m_Text, "#UseObjNum : [%d] #CurrObjNum : [%d]", m_UsedObjNum, m_CurrObjNum);
+		sprintf_s(m_Text, "#UseObjNum : [%d] #CurrObjNum : [%d]", m_UsedObjNum, m_CurrObjNum);
 		cvPutText(m_DrawImage, m_Text, cvPoint(5,30), &m_Font, CV_RGB(0, 255, 0));
 
 		cvNamedWindow(m_WinName, 1);
@@ -645,7 +646,7 @@ bool EvTrackCore::Execute(IplImage* pFrame, long long TimeStamp, int iMotionDire
 			float fFPS = m_iFrameRateCount / 10.;
 			if (fFPS < 5) // 过低帧率日志输出
 			{
-				sprintf(mLogRecord.mLogInfor, "[Warning] : 帧率过低! AveFPS is %.1f in 10 Sec.\n", fFPS);
+				sprintf_s(mLogRecord.mLogInfor, "[Warning] : 帧率过低! AveFPS is %.1f in 10 Sec.\n", fFPS);
 				PrintfLog(&mLogRecord, m_CurrTimeStamp, mLogRecord.mLogInfor);
 			}
 			m_iFrameRateCount = 0;
@@ -1234,14 +1235,14 @@ void EvTrackCore::DrawResult(AmtSingleObject* pObj, IplImage* pFrame)
 		        cvPoint(pObj->mAnalyROI.mObjRect.x, pObj->mAnalyROI.mObjRect.y),
 		        cvPoint(pObj->mAnalyROI.mObjRect.x+pObj->mAnalyROI.mObjRect.width, pObj->mAnalyROI.mObjRect.y+pObj->mAnalyROI.mObjRect.height),
 		        cvScalar(255), 1, CV_AA, 0);
-	sprintf(m_Text, "ER[%.2f]X[%.2f]Y[%.2f]", pObj->mAnalyROI.mExpRate, pObj->mAnalyROI.mShiftRX, pObj->mAnalyROI.mShiftRY);
+	sprintf_s(m_Text, "ER[%.2f]X[%.2f]Y[%.2f]", pObj->mAnalyROI.mExpRate, pObj->mAnalyROI.mShiftRX, pObj->mAnalyROI.mShiftRY);
 	cvPutText(pFrame, m_Text, cvPoint(pObj->mOutPut.mPointLT.x, pObj->mOutPut.mPointLT.y-10), &m_Font, CV_RGB(255, 255, 0));
 
 	if (true == pObj->mUnstable)
 		cvRectangle(pFrame, cvPointFrom32f(pObj->mOutPut.mPointLT), cvPointFrom32f(pObj->mOutPut.mPointRD), cvScalar(125, 0, 125), 2, 8, 0);
 	else
 		cvRectangle(pFrame, cvPointFrom32f(pObj->mOutPut.mPointLT), cvPointFrom32f(pObj->mOutPut.mPointRD), pObj->m_ColorTag, 2, 8, 0);
-	sprintf(m_Text, "ID[%d]_%d*%d", pObj->m_ID, (int)(fabs(pObj->mOutPut.mPointLT.x - pObj->mOutPut.mPointRD.x)), (int)(fabs(pObj->mOutPut.mPointLT.y - pObj->mOutPut.mPointRD.y)));
+	sprintf_s(m_Text, "ID[%d]_%d*%d", pObj->m_ID, (int)(fabs(pObj->mOutPut.mPointLT.x - pObj->mOutPut.mPointRD.x)), (int)(fabs(pObj->mOutPut.mPointLT.y - pObj->mOutPut.mPointRD.y)));
 	cvPutText(pFrame, m_Text, cvPoint(pObj->mOutPut.mPointLT.x, pObj->mOutPut.mPointLT.y), &m_Font, CV_RGB(255, 255, 0));
 
 	// ----------------------- detector's result -----------------------
@@ -1254,7 +1255,7 @@ void EvTrackCore::DrawResult(AmtSingleObject* pObj, IplImage* pFrame)
 	if (true == pObj->m_TrackResult.mFlag)
 	{
 		cvRectangle(pFrame, cvPointFrom32f(pObj->m_TrackResult.mBB.mPointLT), cvPointFrom32f(pObj->m_TrackResult.mBB.mPointRD), cvScalar(0, 0, 60), 1, 8, 0);
-		sprintf(m_Text, "%.3f", pObj->m_TrackResult.mConf);
+		sprintf_s(m_Text, "%.3f", pObj->m_TrackResult.mConf);
 		cvPutText(pFrame, m_Text, cvPoint((int)(pObj->mOutPut.mPointLT.x), (int)(pObj->mOutPut.mPointRD.y)), &m_Font, CV_RGB(255, 255, 0));
 	}
 
@@ -1269,13 +1270,13 @@ void EvTrackCore::DrawResult(AmtSingleObject* pObj, IplImage* pFrame)
 	cvPolyLine(pFrame, &pTraject, &iTracjNum, 1, 0, cvScalar(0,255,0), 2, 8, 0);
 
 	//4. ----------------------- number of PEX and NEX -----------------------
-	sprintf(m_Text, "P: %d", pObj->mPatchNumP);
+	sprintf_s(m_Text, "P: %d", pObj->mPatchNumP);
 	cvPutText(pFrame, m_Text, cvPoint(pObj->mOutPut.mPointRD.x, pObj->mOutPut.mPointLT.y+15), &m_Font, CV_RGB(255, 255, 0));
-	sprintf(m_Text, "N: %d", pObj->mPatchNumN);
+	sprintf_s(m_Text, "N: %d", pObj->mPatchNumN);
 	cvPutText(pFrame, m_Text, cvPoint(pObj->mOutPut.mPointRD.x, pObj->mOutPut.mPointLT.y+30), &m_Font, CV_RGB(255, 255, 0));
 
 	//5. ----------------------- data -----------------------
-	sprintf(m_Text, "T[%d]D[%d]DF[%d]", (int)(pObj->m_TrackResult.mValid), pObj->m_DetectResult.mMatchNum, pObj->m_DetectFiltNum);
+	sprintf_s(m_Text, "T[%d]D[%d]DF[%d]", (int)(pObj->m_TrackResult.mValid), pObj->m_DetectResult.mMatchNum, pObj->m_DetectFiltNum);
 	cvPutText(pFrame, m_Text, cvPoint(pObj->mOutPut.mPointLT.x, pObj->mOutPut.mPointRD.y+15), &m_Font, CV_RGB(0, 255, 0));
 }
 
@@ -1790,7 +1791,7 @@ int EvTrackCore::CreateLogDir(AmtLogRecord* pLog, const char* pParentDir, const 
 	(_tcsrchr(pTempDir, _T('\\')))[1] = 0;
 	WideCharToMultiByte(CP_ACP, 0, pTempDir, -1, pLog->mLogPath, MAX_PATH, NULL, NULL);
 
-	strcat(pLog->mLogPath, pParentDir);
+	strcat_s(pLog->mLogPath, pParentDir);
 	MultiByteToWideChar(CP_ACP, 0, pLog->mLogPath, -1, pTempDir, MAX_PATH);
 	if ( !CreateDirectory(pTempDir, NULL) )
 	{
@@ -1799,8 +1800,8 @@ int EvTrackCore::CreateLogDir(AmtLogRecord* pLog, const char* pParentDir, const 
 
 	if (pChildDir != NULL)
 	{
-		strcat(pLog->mLogPath, "\\");
-		strcat(pLog->mLogPath, pChildDir);
+		strcat_s(pLog->mLogPath, "\\");
+		strcat_s(pLog->mLogPath, pChildDir);
 		MultiByteToWideChar(CP_ACP, 0, pLog->mLogPath, -1, pTempDir, MAX_PATH);
 		if ( !CreateDirectory(pTempDir, NULL) )
 		{
@@ -1810,8 +1811,8 @@ int EvTrackCore::CreateLogDir(AmtLogRecord* pLog, const char* pParentDir, const 
 
 	if (pChannelDir != NULL)
 	{
-		strcat(pLog->mLogPath, "\\");
-		strcat(pLog->mLogPath, pChannelDir);
+		strcat_s(pLog->mLogPath, "\\");
+		strcat_s(pLog->mLogPath, pChannelDir);
 		MultiByteToWideChar(CP_ACP, 0, pLog->mLogPath, -1, pTempDir, MAX_PATH);
 		if ( !CreateDirectory(pTempDir, NULL) )
 		{
@@ -1820,7 +1821,7 @@ int EvTrackCore::CreateLogDir(AmtLogRecord* pLog, const char* pParentDir, const 
 	}
 #else  // for Linux
 	char link[256];
-	sprintf(link, "/proc/%d/exe", getpid());
+	sprintf_s(link, "/proc/%d/exe", getpid());
 	readlink(link, pLog->mLogPath, MAX_PATH);
 	(strrchr(pLog->mLogPath, '/'))[1] = 0;
 	strcat(pLog->mLogPath, pParentDir);
@@ -1875,13 +1876,13 @@ int EvTrackCore::PrintfLog(AmtLogRecord* pLog, long long timeStamp, const char* 
 			pLog->mLogFile = NULL;
 		}
 
-		strcpy(strLogPath, pLog->mLogPath);
-		sprintf(strTemp,"//EvAMT_%s_%04d_%02d_%02d.log", m_szChannelID, iYear, iMon, iDay);
-		strcat(strLogPath, strTemp);
+		strcpy_s(strLogPath, pLog->mLogPath);
+		sprintf_s(strTemp,"//EvAMT_%s_%04d_%02d_%02d.log", m_szChannelID, iYear, iMon, iDay);
+		strcat_s(strLogPath, strTemp);
 
 		if((pLog->mLogFile = fopen(strLogPath,"at+")) != NULL)
 		{
-			sprintf(strTemp,"[%04d-%02d-%02d %02d:%02d:%02d %03d] ", iYear, iMon, iDay, iHour, iMin, iSec, iMilliseconds);
+			sprintf_s(strTemp,"[%04d-%02d-%02d %02d:%02d:%02d %03d] ", iYear, iMon, iDay, iHour, iMin, iSec, iMilliseconds);
 			fwrite(strTemp, (int)(strlen(strTemp)), 1, pLog->mLogFile);
 			fwrite(pstrLog, (int)(strlen(pstrLog)), 1, pLog->mLogFile);
 			fflush(pLog->mLogFile);
@@ -1895,7 +1896,7 @@ int EvTrackCore::PrintfLog(AmtLogRecord* pLog, long long timeStamp, const char* 
 	{
 		if(NULL != pLog->mLogFile)
 		{
-			sprintf(strTemp,"[%04d-%02d-%02d %02d:%02d:%02d %03d] ", iYear, iMon, iDay, iHour, iMin, iSec, iMilliseconds);
+			sprintf_s(strTemp,"[%04d-%02d-%02d %02d:%02d:%02d %03d] ", iYear, iMon, iDay, iHour, iMin, iSec, iMilliseconds);
 			fwrite(strTemp, (int)(strlen(strTemp)), 1, pLog->mLogFile);
 			fwrite(pstrLog, (int)(strlen(pstrLog)), 1, pLog->mLogFile);
 			fflush(pLog->mLogFile);
@@ -1916,24 +1917,24 @@ int EvTrackCore::ConfigLog(AmtLogRecord* pLog, bool bReSet)
 
 	if (false == bReSet)
 	{
-		sprintf(mLogRecord.mLogInfor, "\r\n========== Algo Create! ===========\r\n");
+		sprintf_s(mLogRecord.mLogInfor, "\r\n========== Algo Create! ===========\r\n");
 		lTimeStamp = (long long)time(NULL)*1000;
 	}
 	else
 	{
 		if (0 == m_CurrTimeStamp)
 		{
-			sprintf(mLogRecord.mLogInfor, "\r\n======== Algo ReSet(Init)! ========\r\n");
+			sprintf_s(mLogRecord.mLogInfor, "\r\n======== Algo ReSet(Init)! ========\r\n");
 			lTimeStamp = (long long)time(NULL)*1000;
 		}
 		else
 		{
-			sprintf(mLogRecord.mLogInfor, "\r\n======= Algo ReSet(Modify)! =======\r\n");
+			sprintf_s(mLogRecord.mLogInfor, "\r\n======= Algo ReSet(Modify)! =======\r\n");
 			lTimeStamp = m_CurrTimeStamp;
 		}
 	}
 
-	sprintf(sTemp, " AlgoVer:[%s]\r\n ImgSize:[%d*%d]\r\n Param:[%d-%d-%d-%.1f-%d-%d]\r\n",
+	sprintf_s(sTemp, " AlgoVer:[%s]\r\n ImgSize:[%d*%d]\r\n Param:[%d-%d-%d-%.1f-%d-%d]\r\n",
 		             g_EvTrackCoreVer,
 		             m_ImageSize.width, m_ImageSize.height,
 					 m_AlgoParam.mMinWin,
@@ -1942,10 +1943,10 @@ int EvTrackCore::ConfigLog(AmtLogRecord* pLog, bool bReSet)
 					 m_AlgoParam.mShift,
 					 m_AlgoParam.mPatchsize,
 					 m_AlgoParam.mDrawResults);
-	strcat(mLogRecord.mLogInfor, sTemp);
+	strcat_s(mLogRecord.mLogInfor, sTemp);
 
-	sprintf(sTemp, "===================================\r\n\r\n");
-	strcat(mLogRecord.mLogInfor, sTemp);
+	sprintf_s(sTemp, "===================================\r\n\r\n");
+	strcat_s(mLogRecord.mLogInfor, sTemp);
 
 	PrintfLog(&mLogRecord, lTimeStamp, mLogRecord.mLogInfor);
 

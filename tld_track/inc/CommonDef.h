@@ -8,7 +8,7 @@
 #ifdef  WIN32 || WIN64
 #include <afxmt.h>
 #include <tchar.h>
-#else  // for Linux
+#else   //for linux
 #include <unistd.h>
 #include <sys/stat.h>
 #include <pthread.h>

@@ -16,6 +16,9 @@ inline void EnableMemLeakCheck()
 #include <highgui.h>
 #include <stdio.h>
 #include <time.h>
+#include<Windows.h>
+
+
 
 //#pragma comment(lib, "cv.lib")
 //#pragma comment(lib, "cxcore.lib")
@@ -40,6 +43,8 @@ typedef struct RectArray
 	int iIsActive;
 	int iIsNew;
 	int iObjID;
+	//string name;
+
 }
 RectArray;
 
@@ -55,7 +60,27 @@ typedef struct Line_type
 {
 	CvScalar LineColor[3];
 	int iThickness[3];
-}Line_type;
+}Line_type;  
+
+
+
+//struct metaData
+//{
+//	vector<int*> pos;
+//	Mat img;
+//	vector<string> labels;
+//	bool isAnnotated;
+//	string path;
+//	string name;
+//	metaData()
+//	{
+//		isAnnotated = false;
+//	}
+//};
+//
+//vector<metaData> mydata;
+
+
 
 Line_type LineTypeList;
 
@@ -72,10 +97,10 @@ CvBox2D track_box;
 CvConnectedComp track_comp;
 int backproject_mode = 0;
 
-
 void run_tld(char* argc)
 {
-	char* filename = "2.avi";
+	//cvNamedWindow("avi");
+	char* filename = "D:\\yolo\\videos\\test_video1.avi";
 	CvCapture* pCapture = cvCreateFileCapture(filename);
 	//CvCapture* pCapture = cvCaptureFromCAM(0);
 
@@ -125,7 +150,7 @@ void run_tld(char* argc)
 	int iPauseKey;
 	double dProcTime = 0, dTime;  
 	int iProcCount = 0;
-	for (;;)
+	for (;;)  //无限循环直到按下“ESC”退出
 	{
 #if 0
 		cvWaitKey(100); //将视频变慢
@@ -145,11 +170,11 @@ void run_tld(char* argc)
 
 		cvCvtColor(FrameImg, FrameGray, CV_RGB2GRAY);
 
-		iKey = cvWaitKey(10);
+		iKey = cvWaitKey(10);  // "ESC"
 		if (iKey == 27) 
 		{
 			break;
-		} // "ESC"
+		} 
 
 		frameNum++;
 
@@ -161,6 +186,7 @@ void run_tld(char* argc)
 				{
 					TimeStamp = clock();
 					pRectList->mRectArrayList[i].iObjID = iID;  //将ID 付给这个框   ID是连接跟踪目标和框的唯一标识
+
 					AmtCreateObject(&Amt, pRectList->mRectArrayList[i].RectElement, iID++, (long long)TimeStamp);
 					pRectList->mRectArrayList[i].iIsNew = -1;
 				}
@@ -211,6 +237,10 @@ void run_tld(char* argc)
 					}
 
 					AmtCleanObject(&Amt, iObjID);
+
+
+
+					
 					continue;
 				}
 
@@ -230,20 +260,120 @@ void run_tld(char* argc)
 		cvLine(FrameImg, cvPoint(boundLineX, 0), cvPoint(boundLineX, FrameImg->height-1), cvScalar(255), 2, 8, 0);
 		cvLine(FrameImg, cvPoint(FrameImg->width-boundLineX, 0), cvPoint(FrameImg->width-boundLineX, FrameImg->height-1), cvScalar(255), 2, 8, 0);
 		cvLine(FrameImg, cvPoint(0, boundLineY), cvPoint(FrameImg->width-1, boundLineY), cvScalar(255), 2, 8, 0);
-
 		cvShowImage(window_name, FrameImg);
 		if (bPause == false)
 			iPauseKey = cvWaitKey(10);
 		else
 			iPauseKey = cvWaitKey(0);
 
-		// 触发暂停
+		// 触发暂停  P或F1
 		if (80 == iPauseKey || 112 == iPauseKey)
 			bPause = true;
 		else
 			bPause = false;
 
+
+		//if (iKey == 83) //按下's'
+		//{
+		//	size_t cnt = 0;
+		//	for (int j = 0; j < MAX_OBJ_TRACKING; ++j)
+		//	{
+		//		if (pRectList->mRectArrayList[j].iIsActive)
+		//		{
+		//			cnt++;
+
+		//			tinyxml2::XMLDocument xmlDoc;
+		//			XMLNode * annotation = xmlDoc.NewElement("annotation");
+		//			xmlDoc.InsertFirstChild(annotation);
+
+		//			XMLElement * pElement = xmlDoc.NewElement("folder");
+		//			pElement->SetText("VOCType");
+		//			annotation->InsertFirstChild(pElement);
+
+		//			pElement = xmlDoc.NewElement("filename");
+		//		    	pElement->SetText(pRectList->mRectArrayList[j].name.c_str());
+		//			annotation->InsertEndChild(pElement);
+
+		//			pElement = xmlDoc.NewElement("source");
+		//			XMLElement * pElement_sub = xmlDoc.NewElement("database");
+		//			pElement_sub->SetText("VOC");
+		//			pElement->InsertFirstChild(pElement_sub);
+		//			annotation->InsertEndChild(pElement);
+
+		//			pElement = xmlDoc.NewElement("size");
+		//			pElement_sub = xmlDoc.NewElement("width");
+		//			pElement_sub->SetText(pRectList->mRectArrayList[j].RectElement.width);
+		//			pElement->InsertFirstChild(pElement_sub);
+		//			pElement_sub = xmlDoc.NewElement("height");
+		//			pElement_sub->SetText(pRectList->mRectArrayList[j].RectElement.height);
+		//			pElement->InsertEndChild(pElement_sub);
+		//			pElement_sub = xmlDoc.NewElement("depth");
+		//			//								pElement_sub->SetText(pRectList->mRectArrayList[j]);
+		//			pElement->InsertEndChild(pElement_sub);
+		//			annotation->InsertEndChild(pElement);
+
+		//			pElement = xmlDoc.NewElement("segmented"); // 是否分割
+		//			pElement->SetText(0);
+		//			annotation->InsertEndChild(pElement);
+
+		//			for (int k = 0; k < mydata[j].labels.size(); ++k)
+		//			{
+		//				pElement = xmlDoc.NewElement("object");
+		//				pElement_sub = xmlDoc.NewElement("name"); // 类别
+		//				pElement_sub->SetText(mydata[j].labels[k].c_str());
+		//				pElement->InsertFirstChild(pElement_sub);
+
+		//				pElement_sub = xmlDoc.NewElement("pose"); // 姿态
+		//				pElement_sub->SetText("Unspecified");
+		//				pElement->InsertEndChild(pElement_sub);
+
+		//				pElement_sub = xmlDoc.NewElement("truncated");
+		//				pElement_sub->SetText(0);
+		//				pElement->InsertEndChild(pElement_sub);
+
+		//				pElement_sub = xmlDoc.NewElement("difficult");
+		//				pElement_sub->SetText(0);
+		//				pElement->InsertEndChild(pElement_sub);
+
+		//				pElement_sub = xmlDoc.NewElement("bndbox");
+		//				XMLElement* pElement_sub_sub = xmlDoc.NewElement("xmin");
+		//				pElement_sub_sub->SetText(mydata[j].pos[k][0]);
+		//				pElement_sub->InsertFirstChild(pElement_sub_sub);
+		//				pElement_sub_sub = xmlDoc.NewElement("ymin");
+		//				pElement_sub_sub->SetText(mydata[j].pos[k][1]);
+		//				pElement_sub->InsertEndChild(pElement_sub_sub);
+		//				pElement_sub_sub = xmlDoc.NewElement("xmax");
+		//				pElement_sub_sub->SetText(mydata[j].pos[k][0] + mydata[j].pos[k][2]);
+		//				pElement_sub->InsertEndChild(pElement_sub_sub);
+		//				pElement_sub_sub = xmlDoc.NewElement("ymax");
+		//				pElement_sub_sub->SetText(mydata[j].pos[k][1] + mydata[j].pos[k][3]);
+		//				pElement_sub->InsertEndChild(pElement_sub_sub);
+		//				pElement->InsertEndChild(pElement_sub);
+
+		//				annotation->InsertEndChild(pElement);
+
+		//			}
+
+		//			string filename = "Annotations/";
+		//			for (int x = 0; x < mydata[j].name.length() - 4; ++x)
+		//			{
+		//				filename += mydata[j].name[x];
+		//			}
+		//			filename += ".xml";
+		//			xmlDoc.SaveFile(filename.c_str());
+		//		}
+		//	}
+
+		//}
+
+
+
+
+
+
 	}
+
+
 
 	// #ifdef  EV_JPEG
 	// 	evReleaseCapture(&pCapture); 
@@ -294,6 +424,7 @@ int main(int argc, char* argv[])
 
 void On_Mouse( int event, int x, int y, int flags, void* param)
 {
+	
 	if (event == CV_EVENT_LBUTTONDOWN)
 	{
 		pre_pt = cvPoint(x, y);
@@ -351,5 +482,13 @@ void On_Mouse( int event, int x, int y, int flags, void* param)
 		cvShowImage(window_name,TempImg);
 		cvWaitKey(1);
 		track_object = -1;
+
+
 	}
+
+	
 }
+
+
+
+
