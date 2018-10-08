@@ -74,7 +74,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\tld_track\tld_track_多目标\tld_track\CvUtils;D:\OpenCV\opencv\build\include;D:\tld_track\tld_track_多目标\tld_track\inc;$(IncludePath)</IncludePath>
+    <IncludePath>D:\OpenCV\opencv\build\include\opencv;D:\OpenCV\opencv\build\include\opencv2;D:\tld_track\tld_track_多目标\tld_track\CvUtils;D:\OpenCV\opencv\build\include;D:\tld_track\tld_track_多目标\tld_track\inc;$(IncludePath)</IncludePath>
     <LibraryPath>D:\OpenCV\opencv\build\x64\vc14\lib;$(LibraryPath)</LibraryPath>
     <SourcePath>D:\tld_track\tld_track_多目标\tld_track\src;$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src</SourcePath>
   </PropertyGroup>
@@ -103,13 +103,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>D:\tld_track\tld_track_多目标\tld_track;D:\tld_track\tld_track_多目标\tld_track\Opencv\include;D:\tld_track\tld_track_多目标\tld_track\inc;D:\tld_track\tld_track_多目标\tld_track\CvUtils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\OpenCV\opencv\build\include\opencv2;D:\OpenCV\opencv\build\include\opencv;D:\OpenCV\opencv\build\include;D:\tld_track\tld_track_多目标\tld_track;D:\tld_track\tld_track_多目标\tld_track\inc;D:\tld_track\tld_track_多目标\tld_track\CvUtils</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\tld_track\tld_track_多目标\tld_track\Opencv\lib;D:\tld_track\tld_track_多目标\tld_track\Opencv\dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cv.lib;highgui.lib;cxcore.lib;cvaux.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\OpenCV\opencv2.4.9\opencv\build\x86\vc12\lib;D:\OpenCV\opencv\build\x64\vc14\lib;D:\tld_track\tld_track_多目标\tld_track\Opencv\lib;D:\tld_track\tld_track_多目标\tld_track\Opencv\dll;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cv.lib;opencv_highgui249d.lib;cxcore.lib;cvaux.lib;opencv_world343d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,7 +125,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>D:\OpenCV\opencv\build\x64\vc14\lib;D:\OpenCV\opencv\build\x64\vc14\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>cv.lib;highgui.lib;cxcore.lib;cvaux.lib</AdditionalDependencies>
+      <AdditionalDependencies>cv.lib;cxcore.lib;cvaux.lib;opencv_world343d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

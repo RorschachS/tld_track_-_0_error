@@ -1,0 +1,25 @@
+<annotation>
+    <folder>VOCType</folder>
+    <filename>000053</filename>
+    <source>
+        <database>VOC</database>
+    </source>
+    <size>
+        <width>1280</width>
+        <height>960</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>hat</name>
+        <pose>Unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>737</xmin>
+            <ymin>251</ymin>
+            <xmax>773</xmax>
+            <ymax>293</ymax>
+        </bndbox>
+    </object>
+</annotation>
